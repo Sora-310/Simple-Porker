@@ -87,11 +87,14 @@ class PlayPanel extends JPanel
 class CardsManager
 {
 	private int[] cards;
+	
 	/*
 		カードの配役
 		000 ： ジョーカー
 		101～113 ： クローバーの1～13
-		201～213 : ダイヤの1～13
+		201～213 ： ダイヤの1～13
+        301～313 ： ハートの1～13
+		401～413 ： スペードの1～13
 	*/
 
 	public CardsManager()
