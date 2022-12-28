@@ -91,6 +91,7 @@ class CardsManager
 		カードの配役
 		000 ： ジョーカー
 		101～113 ： クローバーの1～13
+		201～213 : ダイヤの1～13
 	*/
 
 	public CardsManager()
