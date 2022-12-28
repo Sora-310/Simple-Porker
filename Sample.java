@@ -23,6 +23,7 @@ class Sample extends JFrame
 		cardPanel.add(new TitlePanel(), "Title");
 		cardPanel.add(new PlayPanel(), "Play");
 
+		// タイトル画面を表示
 		((CardLayout)(cardPanel.getLayout())).show(cardPanel, "Title");
 
 		getContentPane().add(cardPanel);
@@ -52,6 +53,7 @@ class Sample extends JFrame
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
+					// プレイ画面に遷移
 					((CardLayout)(cardPanel.getLayout())).show(cardPanel, "Play");
 				}
 			});
@@ -60,7 +62,7 @@ class Sample extends JFrame
 			// 終了ボタン
 			endButton = new JButton("終了");
 			endButton.setBounds(20, 310, 80, 40);
-			endButton.addActionListener(e -> System.exit(0));
+			endButton.addActionListener(e -> System.exit(0));	// プログラムを終了
 			add(endButton);
 		}
 	}
@@ -99,20 +101,29 @@ class CardsManager
 
 	public CardsManager()
 	{
+		// カードの束の作成
 		cards = new int[53];
 		initialize();
 	}
 
     public void initialize()
 	{
+		// ジョーカーを格納
 		cards[0] = 0;
 
+		// 他のカードを格納
 		for(int i = 1; i <= 13; i++)
 		{
-			// 
+			// クローバー
 			cards[i] = 100 + i;
+
+			// ダイヤ
 			cards[i + 13] = 200 + i;
+
+			// ハート
 			cards[i + 26] = 300 + i;
+
+			// スペード
 			cards[i + 39] = 400 + i;
 		}
 	}
@@ -121,15 +132,62 @@ class CardsManager
 	{
 		for(int i = 0; i < cards.length; i++)
 		{
+			int rum = (int)(Math.random() * (double)(cards.length));
 
+			int swap = cards[i];
+			cards[i] = cards[rum];
+			cards[rum] = swap;
 		}
+	}
+
+	public int getCard(int num)
+	{
+		if(num < 1 || num > 53)
+		{
+			return -1;
+		}
+
+		return cards[num - 1];
 	}
 }
 
 class Porker
 {
-	public void firstHand()
+	// エラー
+	static final int ERROR = 0;
+
+	// ロイヤルストレートフラッシュ
+	static final int ROYAL_FLUSH = 1;
+	// ストレートフラッシュ
+	static final int STRAIGHT_FLUSH = 2;
+	// フォーカード
+	static final int FOUR_OF_A_KIND = 3;
+	// フルハウス
+	static final int FULL_HOUSE = 4;
+	// フラッシュ
+	static final int FLUSH = 5;
+	// ストレート
+	static final int STRAIGHT = 6;
+	// スリーカード
+	static final int THREE_OF_A_KIND = 7;
+	// ツーペア
+	static final int TWO_PAIR = 8;
+	// ワンペア
+	static final int ONE_PAIR = 9;
+	// ノーペア
+	static final int NO_PAIR = 10;
+
+	public int judgeHand(int[] cards)
 	{
+		// 配列がnullのときエラー
+		if(cards == null)
+			return ERROR;
+
+		// 配列の格納数が5でないときエラー
+		if(cards.length != 5)
+			return ERROR;
+
 		
+		return 0;
 	}
 }
