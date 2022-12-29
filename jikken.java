@@ -1,124 +1,23 @@
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+// import java.awt.*;
+// import java.awt.event.*;
 
 class jikken extends JFrame
 {
 	public static void main(String[] args)
 	{
-		jikken s = new jikken();
-		s.setSize(700, 400);
-		s.setTitle("ポーカー");
-		s.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		s.setLocationRelativeTo(null);
-		s.setVisible(true);
-	}
+		final int N = 3;
 
-	public JPanel cardPanel;
-
-	public jikken()
-	{
-		cardPanel = new JPanel();
-		cardPanel.setLayout(new CardLayout());
-		cardPanel.add(new TitlePanel(), "Title");
-		cardPanel.add(new PlayPanel(), "Play");
-
-		//起動時は一枚目を表示
-        ((CardLayout)(cardPanel.getLayout())).show(cardPanel, "Title");
-
-		getContentPane().add(cardPanel);
-	}
-
-	class TitlePanel extends JPanel
-{
-	private JLabel titleName;
-	private JButton startButton;
-	private JButton endButton;
-
-	public TitlePanel()
-	{
-		setLayout(null);
-
-		// タイトルの表示
-		titleName = new JLabel("P");
-		titleName.setFont(new Font("Arial", Font.PLAIN, 70));
-		titleName.setBounds(240, 100, 400, 70);
-		add(titleName);
-
-		// スタートボタン
-		startButton = new JButton("はじめる");
-		startButton.setBounds(280, 270, 130, 60);
-		startButton.addActionListener(new ActionListener()
+		for(int i = 0; i < N; i++)
 		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				((CardLayout)(cardPanel.getLayout())).show(cardPanel, "Play");
-			}
-		});
-		add(startButton);
-
-		// 終了ボタン
-		endButton = new JButton("終了");
-		endButton.setBounds(20, 310, 80, 40);
-		endButton.addActionListener(e -> System.exit(0));
-		add(endButton);
-	}
-}
-}
-
-class PlayPanel extends JPanel
-{
-	// 画像処理・表示はこっち
-	// private ImageIcon cardsImage;
-
-	private JLabel titleName;
-
-	public PlayPanel()
-	{
-		setLayout(null);
-		
-		titleName = new JLabel("Q");
-		titleName.setFont(new Font("Arial", Font.PLAIN, 70));
-		titleName.setBounds(240, 100, 400, 70);
-		add(titleName);
-	}
-}
-
-class CardsManager
-{
-	private int[] cards;
-	/*
-		カードの配役
-		000 ： ジョーカー
-		101～113 ： クローバーの1～13
-	*/
-
-	public CardsManager()
-	{
-		cards = new int[53];
-		initialize();
-	}
-
-    public void initialize()
-	{
-		cards[0] = 0;
-
-		for(int i = 1; i <= 13; i++)
-		{
-			// 
-			cards[i] = 100 + i;
-			cards[i + 13] = 200 + i;
-			cards[i + 26] = 300 + i;
-			cards[i + 39] = 400 + i;
+			System.out.println(i);
 		}
-	}
-}
 
-class Porker
-{
-	public void firstHand()
-	{
-		
+		System.out.println("────────────────────────────────────────────────────────────");
+
+		for(int i = 0; i < N; ++i)
+		{
+			System.out.println(i);
+		}
 	}
 }
