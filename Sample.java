@@ -106,6 +106,7 @@ class CardsManager
 		initialize();
 	}
 
+	// トランプの初期化
     public void initialize()
 	{
 		// ジョーカーを格納
@@ -128,6 +129,7 @@ class CardsManager
 		}
 	}
 
+	// シャッフル
 	public void shuffle()
 	{
 		for(int i = 0; i < cards.length; i++)
@@ -142,6 +144,7 @@ class CardsManager
 
 	public int getCard(int num)
 	{
+		// 1～53でなければエラー
 		if(num < 1 || num > 53)
 		{
 			return -1;
@@ -177,17 +180,190 @@ class Porker
 	// ノーペア
 	static final int NO_PAIR = 10;
 
+	// 手札の役を判別
 	public int judgeHand(int[] cards)
 	{
+		// 判別前の下準備
+
 		// 配列がnullのときエラー
 		if(cards == null)
+		{
 			return ERROR;
+		}
 
 		// 配列の格納数が5でないときエラー
 		if(cards.length != 5)
+		{
 			return ERROR;
+		}
 
+		// トランプのマークの個数を格納する配列
+		int[] suits = new int[4];
+		// 初期化
+		for(int i = 0; i < suits.length; i++)
+		{
+			suits[i] = 0;
+		}
+
+		// トランプの数字の個数を格納する配列
+		// 配列の0と13は数字のAの個数
+		int[] numbers = new int[14];
+		// 初期化
+		for(int i = 0; i < numbers.length; i++)
+		{
+			numbers[i] = 0;
+		}
+
+		// 5枚のカードのマークと数字をそれぞれ格納
+		for(int i = 0; i < cards.length; i++)
+		{
+			int suit = cards[i] / 100;
+			int num = cards[i] % 100;
+
+			if(suit < 0 || suit > 3)
+			{
+				return ERROR;
+			}
+			
+			if(num < 0 || num > 13)
+			{
+				return ERROR;
+			}
+			
+			suits[suit - 1]++;
+			numbers[num - 1]++;
+		}
+		numbers[13] = numbers[0];
+
+		// 数字の最大個数を取得
+		int num_max = 0;
+		for(int i = 0; i < numbers.length - 1; i++)
+		{
+			if(num_max > numbers[i])
+			{
+				num_max = numbers[i];
+			}
+		}
+
+		// マークの最大個数を取得
+		int suit_max = 0;
+		for(int i = 0; i < suits.length; i++)
+		{
+			if(suit_max > suits[i])
+			{
+				suit_max = suits[i];
+			}
+		}
+
+
+
+		// 判別はここから
+
+		// 最大個数が4の時、フォーカード確定
+		if(num_max == 4)
+		{
+			return FOUR_OF_A_KIND;
+		}
+
+		// ストレートかどうかの判別
+		boolean isStraight = false;
+		int continuous = 0;  // 連続して数字が並んだ回数
+		int num_first = 0;   // ストレートの最初の数字
+		for(int i = 0; i < numbers.length; i++)
+		{
+			if(numbers[i] != 1)
+			{
+				continuous = 0;
+				num_first = 0;
+			}
+			else
+			{
+				continuous++;
+				if(continuous == 1)  // 連続した回数が1の時、最初の数字を取得
+				{
+					num_first = i + 1;
+				}
+
+				if(continuous == 5)	 // 連続した回数が5の時、ストレート確定
+				{
+					isStraight = true;
+					break;
+				}
+			}
+
+		}
 		
-		return 0;
+		// マークが全て同じで、且つストレートの時
+		if(suit_max == 5 && isStraight)
+		{
+			if(num_first == 10)  // 更にストレートが10から始まっている時
+			{
+				// ロイヤルストレートフラッシュ確定
+				return ROYAL_FLUSH;	
+			}
+			
+			// ストレートフラッシュ確定
+			return STRAIGHT_FLUSH;	
+		}
+
+		// 最大個数が3で、且つペアが1つある時
+		if(num_max == 3)
+		{
+			for(int i = 0; i < numbers.length - 1; i++)
+			{
+				if(numbers[i] == 2)
+				{
+					// フルハウス確定
+					return FULL_HOUSE;
+				}
+			}
+		}
+
+		// マークが全て同じの時
+		if(suit_max == 5)
+		{
+			// フラッシュ確定
+			return FLUSH;
+		}
+
+		// ストレートの時
+		if(isStraight)
+		{
+			// ストレート確定
+			return STRAIGHT;
+		}
+
+		// 最大個数が3の時
+		if(num_max == 3)
+		{
+			return THREE_OF_A_KIND;
+		}
+
+		// ペアの個数
+		int num_pair = 0;	
+		for(int i = 0; i < numbers.length; i++)
+		{
+			if(numbers[i] == 2)
+			{
+				num_pair++;
+			}
+		}
+
+		// ペアが2つの時
+		if(num_pair == 2)
+		{
+			// ツーペア確定
+			return TWO_PAIR;
+		}
+
+		// ペアが1つの時
+		if(num_pair == 1)
+		{
+			// ワンペア確定
+			return ONE_PAIR;
+		}
+
+		// どれにも該当しない時、ノーペア確定
+		return NO_PAIR;
 	}
 }
