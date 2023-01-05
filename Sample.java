@@ -70,11 +70,10 @@ class Sample extends JFrame
 
 class PlayPanel extends JPanel
 {
-	// 画像処理・表示はこっち
-	// private ImageIcon cardsImage;
-
 	private JButton endButton;
-	private CardsManager cards;
+	private JLabel image[] = new JLabel[5];
+	private CardManager cards;
+	private int[] cards5 = new int[5];
 
 	public PlayPanel()
 	{
@@ -85,10 +84,36 @@ class PlayPanel extends JPanel
 		endButton.setBounds(20, 310, 80, 40);
 		endButton.addActionListener(e -> System.exit(0));	// プログラムを終了
 		add(endButton);
+
+		// トランプのオブジェクトを生成
+		cards = new CardManager();
+		cards.drowHand(cards5);
+
+		// カードを表示
+		for(int i = 0; i < 5; i++)
+		{
+			image[i] = new JLabel(imageResize(i));
+			image[i].setBounds((120 * i) - 90, 100, 400, 120);
+			add(image[i]);
+		}
+	}
+
+	// カードの画像のサイズを調節し、返す
+	public ImageIcon imageResize(int num)
+	{
+		// 画像を取得
+		ImageIcon icon = new ImageIcon("0ic_middle\\" + Integer.toString(cards5[num]) + ".png");
+
+		// Imageクラスを用いてサイズを調整
+		Image img = icon.getImage();
+		Image newimg = img.getScaledInstance(90, 120, Image.SCALE_SMOOTH);
+		icon = new ImageIcon(newimg);
+
+		return icon;
 	}
 }
 
-class CardsManager
+class CardManager
 {
 	private int[] cards;
 	
@@ -101,7 +126,7 @@ class CardsManager
 		401～413 ： スペードの1～13
 	*/
 
-	public CardsManager()
+	public CardManager()
 	{
 		// カードの束の作成
 		cards = new int[53];
@@ -157,7 +182,29 @@ class CardsManager
 
 	public void drowHand(int[] cards5)
 	{
-		
+		shuffle();
+
+		int count = 0;
+		for(int i = 1; i < 53; i++)
+		{
+			// カードを取得
+			int card = getCard(i);
+
+			// ジョーカーは手札に入れない
+			if(card == 0)
+			{
+				continue;
+			}
+
+			cards5[count] = card;
+			count++;
+
+			// 手札が5枚になったらループを終了
+			if(count == 5)
+			{
+				break;
+			}
+		}
 	}
 }
 
