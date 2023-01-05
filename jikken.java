@@ -6,18 +6,18 @@ class jikken extends JFrame
 {
 	public static void main(String[] args)
 	{
-		final int N = 3;
+		final int[] n = new int[1];
+		n[0] = 3;
 
-		for(int i = 0; i < N; i++)
-		{
-			System.out.println(i);
-		}
+		System.out.println(n[0]);
 
-		System.out.println("────────────────────────────────────────────────────────────");
+		aaa(n);
 
-		for(int i = 0; i < N; ++i)
-		{
-			System.out.println(i);
-		}
+		System.out.println(n[0]);
+	}
+
+	public static void aaa(int[] num)
+	{
+		num[0] = 9999;
 	}
 }
