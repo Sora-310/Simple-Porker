@@ -6,18 +6,22 @@ class jikken extends JFrame
 {
 	public static void main(String[] args)
 	{
-		final int[] n = new int[1];
-		n[0] = 3;
-
-		System.out.println(n[0]);
-
-		aaa(n);
-
-		System.out.println(n[0]);
+		jikken j = new jikken();
+		j.setSize(700, 400);
+		j.setTitle("実験");
+		j.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		j.setLocationRelativeTo(null);
+		j.setVisible(true);
 	}
 
-	public static void aaa(int[] num)
+	private ImageIcon icon;
+	private JLabel lb;
+
+	public jikken()
 	{
-		num[0] = 9999;
+		int num = 000;
+		icon = new ImageIcon("0ic_middle\\" + Integer.toString(num) + ".png");
+		lb = new JLabel(icon);
+		add(lb);
 	}
 }
