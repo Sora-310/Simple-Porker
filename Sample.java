@@ -73,16 +73,18 @@ class PlayPanel extends JPanel
 	// 画像処理・表示はこっち
 	// private ImageIcon cardsImage;
 
-	private JLabel titleName;
+	private JButton endButton;
+	private CardsManager cards;
 
 	public PlayPanel()
 	{
 		setLayout(null);
 
-		titleName = new JLabel("Porker");
-		titleName.setFont(new Font("Arial", Font.PLAIN, 70));
-		titleName.setBounds(240, 100, 400, 70);
-		add(titleName);
+		// 終了ボタン
+		endButton = new JButton("終了");
+		endButton.setBounds(20, 310, 80, 40);
+		endButton.addActionListener(e -> System.exit(0));	// プログラムを終了
+		add(endButton);
 	}
 }
 
@@ -152,6 +154,11 @@ class CardsManager
 
 		return cards[num - 1];
 	}
+
+	public void drowHand(int[] cards5)
+	{
+		
+	}
 }
 
 class Porker
@@ -181,7 +188,7 @@ class Porker
 	static final int NO_PAIR = 10;
 
 	// 手札の役を判別
-	public int judgeHand(int[] cards)
+	static int judgeHand(int[] cards)
 	{
 		// 判別前の下準備
 
@@ -290,7 +297,6 @@ class Porker
 					break;
 				}
 			}
-
 		}
 		
 		// マークが全て同じで、且つストレートの時
