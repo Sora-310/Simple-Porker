@@ -1,5 +1,5 @@
 import javax.swing.*;
-// import java.awt.*;
+import java.awt.*;
 // import java.awt.event.*;
 
 class jikken extends JFrame
@@ -14,14 +14,29 @@ class jikken extends JFrame
 		j.setVisible(true);
 	}
 
-	private ImageIcon icon;
-	private JLabel lb;
+	// private ImageIcon icon;
+	// private JLabel lb;
+	private JButton bt;
 
 	public jikken()
 	{
-		int num = 000;
-		icon = new ImageIcon("0ic_middle\\" + Integer.toString(num) + ".png");
-		lb = new JLabel(icon);
-		add(lb);
+		setLayout(null);
+
+		bt = new JButton(imageResize(101));
+		bt.setBounds(100, 100, 90, 120);
+		add(bt);
+	}
+
+	public ImageIcon imageResize(int num)
+	{
+		// 画像を取得
+		ImageIcon icon = new ImageIcon("0ic_middle\\" + Integer.toString(num) + ".png");
+
+		// Imageクラスを用いてサイズを調整
+		Image img = icon.getImage();
+		Image newimg = img.getScaledInstance(90, 120, Image.SCALE_SMOOTH);
+		icon = new ImageIcon(newimg);
+
+		return icon;
 	}
 }
