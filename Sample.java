@@ -70,18 +70,35 @@ class Sample extends JFrame
 	class PlayPanel extends JPanel
 	{
 		private CardManager cards;
-		private JLabel instruction;
+		private JLabel sentence;
 		private JLabel arrow[] = new JLabel[5];
 		private JButton endButton;
-		private JButton replayButton;
+		private JButton judgeButton;
 		private JButton image[] = new JButton[5];
-		private JRadioButton card_radio[] = new JRadioButton[5];
+		private ImageIcon arrowIcon;
 		private int[] cards5 = new int[5];
+		private boolean isJudge;
 		private boolean[] choise = new boolean[5];
 
 		public PlayPanel()
 		{
+			// 下準備
+			System.out.println(System.getProperty("file.encoding"));
+
 			setLayout(null);
+
+			// トランプのオブジェクトを生成
+			cards = new CardManager();
+			cards.drowHand(cards5);
+
+			// 判定ボタンの機能切り替えを初期化
+			isJudge = true;
+
+			// 矢印の画像を用意
+			arrowIcon = new ImageIcon("images\\arrow.png");
+			Image img = arrowIcon.getImage();
+			Image newimg = img.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+			arrowIcon = new ImageIcon(newimg);
 
 			// 選択判断用配列を初期化
 			for(int i = 0; i < 5; i++)
@@ -89,11 +106,15 @@ class Sample extends JFrame
 				choise[i] = false;
 			}
 
+
+
+			// ここから表示関連
+
 			// 指示文
-			instruction = new JLabel("ホールドするカードを選択してください");
-			instruction.setFont(new Font("MS ゴシック", Font.PLAIN, 20));
-			instruction.setBounds(160, 20, 400, 60);
-			add(instruction);
+			sentence = new JLabel("ホールドするカードを選択してください");
+			sentence.setFont(new Font("MS ゴシック", Font.PLAIN, 20));
+			sentence.setBounds(160, 20, 400, 60);
+			add(sentence);
 
 			// 終了ボタン
 			endButton = new JButton("終了");
@@ -101,38 +122,87 @@ class Sample extends JFrame
 			endButton.addActionListener(e -> System.exit(0));	// プログラムを終了
 			add(endButton);
 
-			// 引き直しボタン
-			replayButton = new JButton("引き直し");
-			replayButton.setBounds(560, 310, 90, 40);
-			replayButton.addActionListener(new ActionListener()
+			// 判定ボタン
+			judgeButton = new JButton("ＯＫ");
+			judgeButton.addActionListener(new ActionListener()
 			{
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					// 表示されているカードを削除
-					for(int i = 0; i < 5; i++)
+					if(isJudge)
 					{
-						cards5[i] = 0;
-						remove(image[i]);
+						for(int i = 0; i < 5; i++)
+						{
+							// 選択していない時、カードを交換
+							if(!choise[i])
+							{
+								remove(image[i]);
+								repaint();
+								
+								// カードを交換して表示
+								cards5[i] = cards.drowCard(i + 7);
+								image[i] = new JButton(imageResize(i));
+								image[i].addActionListener(new CardActionListener());
+								image[i].setBounds((120 * i) + 60, 105, 90, 120);
+								add(image[i]);
+							}
+							else	// そうでない時、矢印を消す
+							{
+								choise[i] = false;
+								setArrow(i, false);
+							}
+						}
+	
+						// 判定を表示
+						String judge = Porker.judgeHand(cards5);
+						sentence.setText(judge);
+
+						// ボタンの文を変更
+						judgeButton.setText("再挑戦");
+
+						// ボタンの機能を切り替え
+						isJudge = false;
 					}
-					repaint();
-
-					// 引き直したカードを表示
-					cards.drowHand(cards5);
-
-					for(int i = 0; i < 5; i++)
+					else
 					{
-						image[i] = new JButton(imageResize(i));
-						image[i].setBounds((120 * i) + 60, 110, 90, 120);
-						add(image[i]);
+						// 表示されているカードを削除
+						for(int i = 0; i < 5; i++)
+						{
+							cards5[i] = 0;
+							remove(image[i]);
+						}
+						repaint();
+
+						// 選択判断用配列を初期化
+						for(int i = 0; i < 5; i++)
+						{
+							choise[i] = false;
+							setArrow(i, false);
+						}
+
+						// 文を元に戻す
+						sentence.setText("ホールドするカードを選択してください");
+
+						// 引き直したカードを表示
+						cards.drowHand(cards5);
+						for(int i = 0; i < 5; i++)
+						{
+							image[i] = new JButton(imageResize(i));
+							image[i].addActionListener(new CardActionListener());
+							image[i].setBounds((120 * i) + 60, 105, 90, 120);
+							add(image[i]);
+						}
+
+						// ボタンの文を変更
+						judgeButton.setText("ＯＫ");
+
+						// ボタンの機能を切り替え
+						isJudge = true;
 					}
 				}
 			});
-			add(replayButton);
-
-			// トランプのオブジェクトを生成
-			cards = new CardManager();
-			cards.drowHand(cards5);
+			judgeButton.setBounds(275, 280, 140, 70);
+			add(judgeButton);
 
 			// カード5枚
 			for(int i = 0; i < 5; i++)
@@ -140,29 +210,16 @@ class Sample extends JFrame
 				// 最初に画像のサイズを調整
 				image[i] = new JButton(imageResize(i));
 				image[i].addActionListener(new CardActionListener());
-				image[i].setBounds((120 * i) + 60, 110, 90, 120);
+				image[i].setBounds((120 * i) + 60, 105, 90, 120);
 				add(image[i]);
 			}
-		}
-		
-		class CardActionListener implements ActionListener
-		{
-			public void actionPerformed(ActionEvent e)
+
+			// 矢印5個（最初は非表示）
+			for(int i = 0; i < 5; i++)
 			{
-				for(int i = 0; i < 5; i++)
-				{
-					if(e.getSource() == image[i])
-					{
-						if(choise[i] = false)
-						{
-							choise[i] = true;
-						}
-						else
-						{
-							choise[i] = false;
-						}
-					}
-				}
+				arrow[i] = new JLabel();
+				arrow[i].setBounds((120 * i) + 55, 195, 100, 100);
+				add(arrow[i]);
 			}
 		}
 		
@@ -171,19 +228,65 @@ class Sample extends JFrame
 		{
 			// 画像を取得
 			ImageIcon icon = new ImageIcon("images\\" + Integer.toString(cards5[num]) + ".png");
-
+			
 			// Imageクラスを用いてサイズを調整
 			Image img = icon.getImage();
 			Image newimg = img.getScaledInstance(90, 120, Image.SCALE_SMOOTH);
 			icon = new ImageIcon(newimg);
-
+			
 			return icon;
+		}
+
+		// 矢印の表示を更新
+		public void setArrow(int n, boolean choise)
+		{
+			// 表示されている矢印を削除
+			remove(arrow[n]);
+			repaint();
+
+			// 選択されている時、矢印を表示
+			if(choise)
+			{
+				arrow[n] = new JLabel(arrowIcon);
+			}
+			else	// そうでなければ、非表示
+			{
+				arrow[n] = new JLabel();
+			}
+			arrow[n].setBounds((120 * n) + 55, 195, 100, 100);
+			add(arrow[n]);
+		}
+
+		// トランプを選択した時の動作
+		class CardActionListener implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				for(int i = 0; i < 5; i++)
+				{
+					if(e.getSource() == image[i])
+					{
+						// ボタンを押す度に切り替わる
+						if(choise[i] == false)
+						{
+							choise[i] = true;
+							setArrow(i, choise[i]);
+						}
+						else
+						{
+							choise[i] = false;
+							setArrow(i, choise[i]);
+						}
+					}
+				}
+			}
 		}
 	}
 }
 
 class CardManager
 {
+	// 山札
 	private int[] cards;
 	
 	/*
@@ -197,7 +300,7 @@ class CardManager
 
 	public CardManager()
 	{
-		// カードの束の作成
+		// 山札の作成
 		cards = new int[53];
 		initialize();
 	}
@@ -209,7 +312,7 @@ class CardManager
 		cards[0] = 0;
 
 		// 他のカードを格納
-		for(int i = 1; i <= 13; i++)
+		for(int i = 1; i < 14; i++)
 		{
 			// クローバー
 			cards[i] = 100 + i;
@@ -238,26 +341,34 @@ class CardManager
 		}
 	}
 
-	public int getCard(int num)
+	// 山札から1枚引く
+	public int drowCard(int num)
 	{
-		// 1～53でなければエラー
+		// 1～53でない時、エラー
 		if(num < 1 || num > 53)
 		{
 			return -1;
 		}
 
+		// ジョーカーを引いたとき、11枚目を引く
+		if(cards[num - 1] == 0)
+		{
+			num += 12 - num;
+		}
+
 		return cards[num - 1];
 	}
 
+	// 山札をシャッフルして、5枚引く
 	public void drowHand(int[] cards5)
 	{
 		shuffle();
 
 		int count = 0;
-		for(int i = 1; i < 53; i++)
+		for(int i = 1; i < 6; i++)
 		{
 			// カードを取得
-			int card = getCard(i);
+			int card = drowCard(i);
 
 			// ジョーカーは手札に入れない
 			if(card == 0)
@@ -280,33 +391,12 @@ class CardManager
 class Porker
 {
 	// エラー
-	static final int ERROR = 0;
+	static final String ERROR = "ERROR";
 
-	// ロイヤルストレートフラッシュ
-	static final int ROYAL_FLUSH = 1;
-	// ストレートフラッシュ
-	static final int STRAIGHT_FLUSH = 2;
-	// フォーカード
-	static final int FOUR_OF_A_KIND = 3;
-	// フルハウス
-	static final int FULL_HOUSE = 4;
-	// フラッシュ
-	static final int FLUSH = 5;
-	// ストレート
-	static final int STRAIGHT = 6;
-	// スリーカード
-	static final int THREE_OF_A_KIND = 7;
-	// ツーペア
-	static final int TWO_PAIR = 8;
-	// ワンペア
-	static final int ONE_PAIR = 9;
-	// ノーペア
-	static final int NO_PAIR = 10;
-
-	// 手札の役を判別
-	static int judgeHand(int[] cards)
+	// 手札の役を判定
+	public static String judgeHand(int[] cards)
 	{
-		// 判別前の下準備
+		// 判定前の下準備
 
 		// 配列がnullのときエラー
 		if(cards == null)
@@ -343,12 +433,12 @@ class Porker
 			int suit = cards[i] / 100;
 			int num = cards[i] % 100;
 
-			if(suit < 0 || suit > 3)
+			if(suit < 1 || suit > 4)
 			{
 				return ERROR;
 			}
 			
-			if(num < 0 || num > 13)
+			if(num < 1 || num > 13)
 			{
 				return ERROR;
 			}
@@ -362,7 +452,7 @@ class Porker
 		int num_max = 0;
 		for(int i = 0; i < numbers.length - 1; i++)
 		{
-			if(num_max > numbers[i])
+			if(num_max < numbers[i])
 			{
 				num_max = numbers[i];
 			}
@@ -372,7 +462,7 @@ class Porker
 		int suit_max = 0;
 		for(int i = 0; i < suits.length; i++)
 		{
-			if(suit_max > suits[i])
+			if(suit_max < suits[i])
 			{
 				suit_max = suits[i];
 			}
@@ -380,15 +470,15 @@ class Porker
 
 
 
-		// 判別はここから
+		// 判定はここから
 
 		// 最大個数が4の時、フォーカード確定
 		if(num_max == 4)
 		{
-			return FOUR_OF_A_KIND;
+			return "フォーカード";
 		}
 
-		// ストレートかどうかの判別
+		// ストレートかどうかの判定
 		boolean isStraight = false;
 		int continuous = 0;  // 連続して数字が並んだ回数
 		int num_first = 0;   // ストレートの最初の数字
@@ -421,11 +511,11 @@ class Porker
 			if(num_first == 10)  // 更にストレートが10から始まっている時
 			{
 				// ロイヤルストレートフラッシュ確定
-				return ROYAL_FLUSH;	
+				return "ロイヤルフラッシュ";	
 			}
 			
 			// ストレートフラッシュ確定
-			return STRAIGHT_FLUSH;	
+			return "ストレートフラッシュ";	
 		}
 
 		// 最大個数が3で、且つペアが1つある時
@@ -436,7 +526,7 @@ class Porker
 				if(numbers[i] == 2)
 				{
 					// フルハウス確定
-					return FULL_HOUSE;
+					return "フルハウス";
 				}
 			}
 		}
@@ -445,20 +535,20 @@ class Porker
 		if(suit_max == 5)
 		{
 			// フラッシュ確定
-			return FLUSH;
+			return "フラッシュ";
 		}
 
 		// ストレートの時
 		if(isStraight)
 		{
 			// ストレート確定
-			return STRAIGHT;
+			return "ストレート";
 		}
 
 		// 最大個数が3の時
 		if(num_max == 3)
 		{
-			return THREE_OF_A_KIND;
+			return "スリーカード";
 		}
 
 		// ペアの個数
@@ -475,54 +565,17 @@ class Porker
 		if(num_pair == 2)
 		{
 			// ツーペア確定
-			return TWO_PAIR;
+			return "ツーペア";
 		}
 
 		// ペアが1つの時
 		if(num_pair == 1)
 		{
 			// ワンペア確定
-			return ONE_PAIR;
+			return "ワンペア";
 		}
 
 		// どれにも該当しない時、ノーペア確定
-		return NO_PAIR;
-	}
-
-	// 役を文字列に変換
-	static String changeString(int num)
-	{
-		switch(num)
-		{
-			case ROYAL_FLUSH:
-				return "ロイヤルフラッシュ";
-
-			case STRAIGHT_FLUSH:
-				return "ストレートフラッシュ";
-
-			case FOUR_OF_A_KIND:
-				return "フォーカード";
-			
-			case FULL_HOUSE:
-				return "フルハウス";
-
-			case FLUSH:
-				return "フラッシュ";
-
-			case STRAIGHT:
-				return "ストレート";
-
-			case THREE_OF_A_KIND:
-				return "スリーカード";
-
-			case TWO_PAIR:
-				return "ツーペア";
-
-			case ONE_PAIR:
-				return "ワンペア";
-
-			default:
-				return "ノーペア";
-		}
+		return "ノーペア";
 	}
 }
