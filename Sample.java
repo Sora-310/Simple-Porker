@@ -66,50 +66,119 @@ class Sample extends JFrame
 			add(endButton);
 		}
 	}
-}
 
-class PlayPanel extends JPanel
-{
-	private JButton endButton;
-	private JLabel image[] = new JLabel[5];
-	private CardManager cards;
-	private int[] cards5 = new int[5];
-
-	public PlayPanel()
+	class PlayPanel extends JPanel
 	{
-		setLayout(null);
+		private CardManager cards;
+		private JLabel instruction;
+		private JLabel arrow[] = new JLabel[5];
+		private JButton endButton;
+		private JButton replayButton;
+		private JButton image[] = new JButton[5];
+		private JRadioButton card_radio[] = new JRadioButton[5];
+		private int[] cards5 = new int[5];
+		private boolean[] choise = new boolean[5];
 
-		// 終了ボタン
-		endButton = new JButton("終了");
-		endButton.setBounds(20, 310, 80, 40);
-		endButton.addActionListener(e -> System.exit(0));	// プログラムを終了
-		add(endButton);
-
-		// トランプのオブジェクトを生成
-		cards = new CardManager();
-		cards.drowHand(cards5);
-
-		// カードを表示
-		for(int i = 0; i < 5; i++)
+		public PlayPanel()
 		{
-			image[i] = new JLabel(imageResize(i));
-			image[i].setBounds((120 * i) - 90, 100, 400, 120);
-			add(image[i]);
+			setLayout(null);
+
+			// 選択判断用配列を初期化
+			for(int i = 0; i < 5; i++)
+			{
+				choise[i] = false;
+			}
+
+			// 指示文
+			instruction = new JLabel("ホールドするカードを選択してください");
+			instruction.setFont(new Font("MS ゴシック", Font.PLAIN, 20));
+			instruction.setBounds(160, 20, 400, 60);
+			add(instruction);
+
+			// 終了ボタン
+			endButton = new JButton("終了");
+			endButton.setBounds(20, 310, 80, 40);
+			endButton.addActionListener(e -> System.exit(0));	// プログラムを終了
+			add(endButton);
+
+			// 引き直しボタン
+			replayButton = new JButton("引き直し");
+			replayButton.setBounds(560, 310, 90, 40);
+			replayButton.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					// 表示されているカードを削除
+					for(int i = 0; i < 5; i++)
+					{
+						cards5[i] = 0;
+						remove(image[i]);
+					}
+					repaint();
+
+					// 引き直したカードを表示
+					cards.drowHand(cards5);
+
+					for(int i = 0; i < 5; i++)
+					{
+						image[i] = new JButton(imageResize(i));
+						image[i].setBounds((120 * i) + 60, 110, 90, 120);
+						add(image[i]);
+					}
+				}
+			});
+			add(replayButton);
+
+			// トランプのオブジェクトを生成
+			cards = new CardManager();
+			cards.drowHand(cards5);
+
+			// カード5枚
+			for(int i = 0; i < 5; i++)
+			{
+				// 最初に画像のサイズを調整
+				image[i] = new JButton(imageResize(i));
+				image[i].addActionListener(new CardActionListener());
+				image[i].setBounds((120 * i) + 60, 110, 90, 120);
+				add(image[i]);
+			}
 		}
-	}
+		
+		class CardActionListener implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				for(int i = 0; i < 5; i++)
+				{
+					if(e.getSource() == image[i])
+					{
+						if(choise[i] = false)
+						{
+							choise[i] = true;
+						}
+						else
+						{
+							choise[i] = false;
+						}
+					}
+				}
+			}
+		}
+		
+		// カードの画像のサイズを調節し、返す
+		public ImageIcon imageResize(int num)
+		{
+			// 画像を取得
+			ImageIcon icon = new ImageIcon("images\\" + Integer.toString(cards5[num]) + ".png");
 
-	// カードの画像のサイズを調節し、返す
-	public ImageIcon imageResize(int num)
-	{
-		// 画像を取得
-		ImageIcon icon = new ImageIcon("0ic_middle\\" + Integer.toString(cards5[num]) + ".png");
+			// Imageクラスを用いてサイズを調整
+			Image img = icon.getImage();
+			Image newimg = img.getScaledInstance(90, 120, Image.SCALE_SMOOTH);
+			icon = new ImageIcon(newimg);
 
-		// Imageクラスを用いてサイズを調整
-		Image img = icon.getImage();
-		Image newimg = img.getScaledInstance(90, 120, Image.SCALE_SMOOTH);
-		icon = new ImageIcon(newimg);
-
-		return icon;
+			return icon;
+		}
 	}
 }
 
@@ -418,5 +487,42 @@ class Porker
 
 		// どれにも該当しない時、ノーペア確定
 		return NO_PAIR;
+	}
+
+	// 役を文字列に変換
+	static String changeString(int num)
+	{
+		switch(num)
+		{
+			case ROYAL_FLUSH:
+				return "ロイヤルフラッシュ";
+
+			case STRAIGHT_FLUSH:
+				return "ストレートフラッシュ";
+
+			case FOUR_OF_A_KIND:
+				return "フォーカード";
+			
+			case FULL_HOUSE:
+				return "フルハウス";
+
+			case FLUSH:
+				return "フラッシュ";
+
+			case STRAIGHT:
+				return "ストレート";
+
+			case THREE_OF_A_KIND:
+				return "スリーカード";
+
+			case TWO_PAIR:
+				return "ツーペア";
+
+			case ONE_PAIR:
+				return "ワンペア";
+
+			default:
+				return "ノーペア";
+		}
 	}
 }
