@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.applet.*;
 
 class Sample extends JFrame
 {
@@ -14,14 +15,14 @@ class Sample extends JFrame
 		s.setVisible(true);
 	}
 
-	public JPanel cardPanel;
+	private JPanel cardPanel;
 
 	public Sample()
 	{
 		cardPanel = new JPanel();
 		cardPanel.setLayout(new CardLayout());
 		cardPanel.add(new TitlePanel(), "Title");
-		cardPanel.add(new PlayPanel(), "Play");
+		cardPanel.add(new PlayPanel(), "Play");		
 
 		// タイトル画面を表示
 		((CardLayout)(cardPanel.getLayout())).show(cardPanel, "Title");
@@ -34,10 +35,14 @@ class Sample extends JFrame
 		private JLabel titleName;
 		private JButton startButton;
 		private JButton endButton;
+		private AudioClip select_sou;
 
 		public TitlePanel()
 		{
 			setLayout(null);
+
+			// 選択音を用意
+			select_sou = Applet.newAudioClip(getClass().getResource("select_sou.wav"));
 
 			// タイトルの表示
 			titleName = new JLabel("Porker");
@@ -53,8 +58,8 @@ class Sample extends JFrame
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					// プレイ画面に遷移
-					((CardLayout)(cardPanel.getLayout())).show(cardPanel, "Play");
+					select_sou.play();
+					((CardLayout)(cardPanel.getLayout())).show(cardPanel, "Play");	// プレイ画面に遷移
 				}
 			});
 			add(startButton);
@@ -62,7 +67,15 @@ class Sample extends JFrame
 			// 終了ボタン
 			endButton = new JButton("終了");
 			endButton.setBounds(20, 310, 80, 40);
-			endButton.addActionListener(e -> System.exit(0));	// プログラムを終了
+			endButton.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					select_sou.play();					
+					System.exit(0);	// プログラムを終了
+				}
+			});	
 			add(endButton);
 		}
 	}
@@ -76,6 +89,7 @@ class Sample extends JFrame
 		private JButton judgeButton;
 		private JButton image[] = new JButton[5];
 		private ImageIcon arrowIcon;
+		private AudioClip select_sou;
 		private int[] cards5 = new int[5];
 		private boolean isJudge;
 		private boolean[] choise = new boolean[5];
@@ -83,7 +97,6 @@ class Sample extends JFrame
 		public PlayPanel()
 		{
 			// 下準備
-			System.out.println(System.getProperty("file.encoding"));
 
 			setLayout(null);
 
@@ -106,6 +119,9 @@ class Sample extends JFrame
 				choise[i] = false;
 			}
 
+			// 選択音を用意
+			select_sou = Applet.newAudioClip(getClass().getResource("select_sou.wav"));
+
 
 
 			// ここから表示関連
@@ -119,7 +135,15 @@ class Sample extends JFrame
 			// 終了ボタン
 			endButton = new JButton("終了");
 			endButton.setBounds(20, 310, 80, 40);
-			endButton.addActionListener(e -> System.exit(0));	// プログラムを終了
+			endButton.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					select_sou.play();
+					System.exit(0);	// プログラムを終了
+				}
+			});
 			add(endButton);
 
 			// 判定ボタン
@@ -129,6 +153,7 @@ class Sample extends JFrame
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
+					select_sou.play();
 					if(isJudge)
 					{
 						for(int i = 0; i < 5; i++)
@@ -260,8 +285,12 @@ class Sample extends JFrame
 		// トランプを選択した時の動作
 		class CardActionListener implements ActionListener
 		{
+			private AudioClip select_sou = Applet.newAudioClip(getClass().getResource("select_sou.wav"));
+			
 			public void actionPerformed(ActionEvent e)
 			{
+				select_sou.play();
+
 				for(int i = 0; i < 5; i++)
 				{
 					if(e.getSource() == image[i])
