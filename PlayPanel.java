@@ -1,7 +1,8 @@
+import java.io.File;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.applet.*;
+import javax.sound.sampled.*;
 
 class PlayPanel extends JPanel
 {
@@ -13,8 +14,8 @@ class PlayPanel extends JPanel
 	private JButton allSelectButton;
 	private JButton image[] = new JButton[5];
 	private ImageIcon arrowIcon;
-	private AudioClip select_sou;
-	private AudioClip fanfare_sou;
+	private Clip select_sou;
+	private Clip fanfare_sou;
 	private int[] cards5 = new int[5];
 	private boolean isJudge;
 	private boolean isAll;
@@ -47,8 +48,8 @@ class PlayPanel extends JPanel
 		}
 
 		// 選択音を用意
-		select_sou = Applet.newAudioClip(getClass().getResource("select_sou.wav"));
-		fanfare_sou = Applet.newAudioClip(getClass().getResource("fanfare.wav"));
+		select_sou = SoundManager.createClip(new File("sounds\\select_sou.wav"));
+		fanfare_sou = SoundManager.createClip(new File("sounds\\fanfare.wav"));
 
 
 
@@ -68,7 +69,7 @@ class PlayPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				select_sou.play();
+				select_sou.start();;
 				System.exit(0);	// プログラムを終了
 			}
 		});
@@ -81,7 +82,7 @@ class PlayPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				select_sou.play();
+				select_sou.start();;
 				if(isJudge)
 				{
 					for(int i = 0; i < 5; i++)
@@ -110,7 +111,7 @@ class PlayPanel extends JPanel
 					int judge_num = Porker.judgeHand(cards5);
 					if(judge_num > 0 && judge_num < 7)	// ストレート以上の時、音を鳴らす
 					{
-						fanfare_sou.play();
+						fanfare_sou.start();;
 					}
 					sentence.setText(Porker.getStringHand(judge_num));
 
@@ -257,11 +258,11 @@ class PlayPanel extends JPanel
 	// トランプを選択した時の動作
 	class CardActionListener implements ActionListener
 	{
-		private AudioClip select_sou = Applet.newAudioClip(getClass().getResource("select_sou.wav"));
+		private Clip select_sou = SoundManager.createClip(new File("sounds\\select_sou.wav"));
 		
 		public void actionPerformed(ActionEvent e)
 		{
-			select_sou.play();
+			select_sou.start();;
 
 			for(int i = 0; i < 5; i++)
 			{
