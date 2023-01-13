@@ -1,21 +1,23 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.applet.*;
+import java.io.File;
+
+import javax.sound.sampled.*;;
 
 class TitlePanel extends JPanel
 {
 	private JLabel titleName;
 	private JButton startButton;
 	private JButton endButton;
-	private AudioClip select_sou;
+	private Clip select_sou;
 
 	public TitlePanel()
 	{
 		setLayout(null);
 
 		// 選択音を用意
-		select_sou = Applet.newAudioClip(getClass().getResource("select_sou.wav"));
+		select_sou = SoundManager.createClip(new File("sounds\\select_sou.wav"));
 
 		// タイトルの表示
 		titleName = new JLabel("Porker");
@@ -31,7 +33,7 @@ class TitlePanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				select_sou.play();
+				select_sou.start();
 
 				// プレイ画面に遷移
 				JPanel cardPanel = (JPanel)getParent();
@@ -48,7 +50,7 @@ class TitlePanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				select_sou.play();					
+				select_sou.start();					
 				System.exit(0);	// プログラムを終了
 			}
 		});	
