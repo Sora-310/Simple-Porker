@@ -87,11 +87,14 @@ class Sample extends JFrame
 		private JLabel arrow[] = new JLabel[5];
 		private JButton endButton;
 		private JButton judgeButton;
+		private JButton allSelectButton;
 		private JButton image[] = new JButton[5];
 		private ImageIcon arrowIcon;
 		private AudioClip select_sou;
+		private AudioClip fanfare_sou;
 		private int[] cards5 = new int[5];
 		private boolean isJudge;
+		private boolean isAll;
 		private boolean[] choise = new boolean[5];
 
 		public PlayPanel()
@@ -106,6 +109,7 @@ class Sample extends JFrame
 
 			// 判定ボタンの機能切り替えを初期化
 			isJudge = true;
+			isAll = true;
 
 			// 矢印の画像を用意
 			arrowIcon = new ImageIcon("images\\arrow.png");
@@ -121,6 +125,7 @@ class Sample extends JFrame
 
 			// 選択音を用意
 			select_sou = Applet.newAudioClip(getClass().getResource("select_sou.wav"));
+			fanfare_sou = Applet.newAudioClip(getClass().getResource("fanfare.wav"));
 
 
 
@@ -179,8 +184,12 @@ class Sample extends JFrame
 						}
 	
 						// 判定を表示
-						String judge = Porker.judgeHand(cards5);
-						sentence.setText(judge);
+						int judge_num = Porker.judgeHand(cards5);
+						if(judge_num > 0 && judge_num < 7)	// ストレート以上の時、音を鳴らす
+						{
+							fanfare_sou.play();
+						}
+						sentence.setText(Porker.getStringHand(judge_num));
 
 						// ボタンの文を変更
 						judgeButton.setText("再挑戦");
@@ -229,6 +238,46 @@ class Sample extends JFrame
 			judgeButton.setBounds(275, 280, 140, 70);
 			add(judgeButton);
 
+			// 全選択ボタン
+		allSelectButton = new JButton("全選択：OFF");
+		allSelectButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if(isAll)
+				{
+					for(int i = 0; i < 5; i++)
+					{
+						if(!choise[i])
+						{
+							choise[i] = true;
+							setArrow(i, choise[i]);
+						}
+					}
+
+					allSelectButton.setText("全選択：ON");
+					isAll = false;
+				}
+				else
+				{
+					for(int i = 0; i < 5; i++)
+					{
+						if(choise[i])
+						{
+							choise[i] = false;
+							setArrow(i, choise[i]);
+						}
+					}
+					
+					allSelectButton.setText("全選択：OFF");
+					isAll = true;
+				}
+			}
+		});
+		allSelectButton.setMargin(new Insets(5, 10, 5, 10));
+		allSelectButton.setBounds(450, 300, 100, 50);
+		add(allSelectButton);
+
 			// カード5枚
 			for(int i = 0; i < 5; i++)
 			{
@@ -247,7 +296,7 @@ class Sample extends JFrame
 				add(arrow[i]);
 			}
 		}
-		
+
 		// カードの画像のサイズを調節し、返す
 		public ImageIcon imageResize(int num)
 		{
@@ -420,10 +469,31 @@ class CardManager
 class Porker
 {
 	// エラー
-	static final String ERROR = "ERROR";
+	static final int ERROR = 0;
+
+	// ロイヤルフラッシュ（ロイヤルストレートフラッシュ）
+	static final int ROYAL_FLUSH     = 1;
+	// ストレートフラッシュ
+	static final int STRAIGHT_FLUSH  = 2;
+	// フォーカード
+	static final int FOUR_OF_A_KIND  = 3;
+	// フルハウス
+	static final int FULL_HOUSE      = 4;
+	// フラッシュ
+	static final int FLUSH           = 5;
+	// ストレート
+	static final int STRAIGHT        = 6;
+	// スリーカード
+	static final int THREE_OF_A_KIND = 7;
+	// ツーペア
+	static final int TWO_PAIR        = 8;
+	// ワンペア
+	static final int ONE_PAIR        = 9;
+	// ノーペア
+	static final int NO_PAIR         = 10;
 
 	// 手札の役を判定
-	public static String judgeHand(int[] cards)
+	public static int judgeHand(int[] cards)
 	{
 		// 判定前の下準備
 
@@ -504,7 +574,7 @@ class Porker
 		// 最大個数が4の時、フォーカード確定
 		if(num_max == 4)
 		{
-			return "フォーカード";
+			return FOUR_OF_A_KIND;
 		}
 
 		// ストレートかどうかの判定
@@ -540,11 +610,11 @@ class Porker
 			if(num_first == 10)  // 更にストレートが10から始まっている時
 			{
 				// ロイヤルストレートフラッシュ確定
-				return "ロイヤルフラッシュ";	
+				return ROYAL_FLUSH;	
 			}
 			
 			// ストレートフラッシュ確定
-			return "ストレートフラッシュ";	
+			return STRAIGHT_FLUSH;	
 		}
 
 		// 最大個数が3で、且つペアが1つある時
@@ -555,7 +625,7 @@ class Porker
 				if(numbers[i] == 2)
 				{
 					// フルハウス確定
-					return "フルハウス";
+					return FULL_HOUSE;
 				}
 			}
 		}
@@ -564,20 +634,20 @@ class Porker
 		if(suit_max == 5)
 		{
 			// フラッシュ確定
-			return "フラッシュ";
+			return FLUSH;
 		}
 
 		// ストレートの時
 		if(isStraight)
 		{
 			// ストレート確定
-			return "ストレート";
+			return STRAIGHT;
 		}
 
 		// 最大個数が3の時
 		if(num_max == 3)
 		{
-			return "スリーカード";
+			return THREE_OF_A_KIND;
 		}
 
 		// ペアの個数
@@ -594,17 +664,53 @@ class Porker
 		if(num_pair == 2)
 		{
 			// ツーペア確定
-			return "ツーペア";
+			return TWO_PAIR;
 		}
 
 		// ペアが1つの時
 		if(num_pair == 1)
 		{
 			// ワンペア確定
-			return "ワンペア";
+			return ONE_PAIR;
 		}
 
 		// どれにも該当しない時、ノーペア確定
-		return "ノーペア";
+		return NO_PAIR;
+	}
+
+	static String getStringHand(int num)
+	{
+		switch(num)
+		{
+			case ROYAL_FLUSH:
+				return "ロイヤルストレートフラッシュ";
+
+			case STRAIGHT_FLUSH:
+				return "ストレートフラッシュ";
+
+			case FOUR_OF_A_KIND:
+				return "フォーカード";
+			
+			case FULL_HOUSE:
+				return "フルハウス";
+		
+			case FLUSH:
+				return "フラッシュ";
+			
+			case STRAIGHT:
+			    return "ストレート";
+			
+			case THREE_OF_A_KIND:
+				return "スリーカード";
+			
+			case TWO_PAIR:
+				return "ツーペア";
+		
+			case ONE_PAIR:
+				return "ワンペア";			
+			
+			default:
+				return "ノーペア";
+		}
 	}
 }
