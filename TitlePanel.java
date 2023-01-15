@@ -33,7 +33,7 @@ class TitlePanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				select_sou.start();
+				SoundManager.playback(select_sou);
 
 				// プレイ画面に遷移
 				JPanel cardPanel = (JPanel)getParent();
@@ -50,7 +50,7 @@ class TitlePanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				select_sou.start();					
+				SoundManager.playback(select_sou);				
 				System.exit(0);	// プログラムを終了
 			}
 		});	

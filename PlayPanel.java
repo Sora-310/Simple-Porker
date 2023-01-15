@@ -69,7 +69,7 @@ class PlayPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				select_sou.start();;
+				SoundManager.playback(select_sou);
 				System.exit(0);	// プログラムを終了
 			}
 		});
@@ -82,7 +82,7 @@ class PlayPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				select_sou.start();;
+				SoundManager.playback(select_sou);
 				if(isJudge)
 				{
 					for(int i = 0; i < 5; i++)
@@ -95,9 +95,7 @@ class PlayPanel extends JPanel
 							
 							// カードを交換して表示
 							cards5[i] = cards.drowCard(i + 7);
-							image[i] = new JButton(imageResize(i));
-							image[i].addActionListener(new CardActionListener());
-							image[i].setBounds((120 * i) + 60, 105, 90, 120);
+							image[i] = makeCard(i);
 							add(image[i]);
 						}
 						else	// そうでない時、矢印を消す
@@ -111,7 +109,7 @@ class PlayPanel extends JPanel
 					int judge_num = Porker.judgeHand(cards5);
 					if(judge_num > 0 && judge_num < 7)	// ストレート以上の時、音を鳴らす
 					{
-						fanfare_sou.start();;
+						SoundManager.playback(fanfare_sou);
 					}
 					sentence.setText(Porker.getStringHand(judge_num));
 
@@ -145,9 +143,7 @@ class PlayPanel extends JPanel
 					cards.drowHand(cards5);
 					for(int i = 0; i < 5; i++)
 					{
-						image[i] = new JButton(imageResize(i));
-						image[i].addActionListener(new CardActionListener());
-						image[i].setBounds((120 * i) + 60, 105, 90, 120);
+						image[i] = makeCard(i);
 						add(image[i]);
 					}
 
@@ -168,6 +164,7 @@ class PlayPanel extends JPanel
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				SoundManager.playback(select_sou);
 				if(isAll)
 				{
 					for(int i = 0; i < 5; i++)
@@ -206,9 +203,7 @@ class PlayPanel extends JPanel
 		for(int i = 0; i < 5; i++)
 		{
 			// 最初に画像のサイズを調整
-			image[i] = new JButton(imageResize(i));
-			image[i].addActionListener(new CardActionListener());
-			image[i].setBounds((120 * i) + 60, 105, 90, 120);
+			image[i] = makeCard(i);
 			add(image[i]);
 		}
 
@@ -221,8 +216,17 @@ class PlayPanel extends JPanel
 		}
 	}
 
+	// カードを1枚表示
+	private JButton makeCard(int num)
+	{
+		JButton button = new JButton(imageResize(num));
+		button.addActionListener(new CardActionListener());
+		button.setBounds((120 * num) + 60, 105, 90, 120);
+		return button;
+	}
+
 	// カードの画像のサイズを調節し、返す
-	public ImageIcon imageResize(int num)
+	private ImageIcon imageResize(int num)
 	{
 		// 画像を取得
 		ImageIcon icon = new ImageIcon("images\\" + Integer.toString(cards5[num]) + ".png");
@@ -236,7 +240,7 @@ class PlayPanel extends JPanel
 	}
 
 	// 矢印の表示を更新
-	public void setArrow(int n, boolean choise)
+	private void setArrow(int n, boolean choise)
 	{
 		// 表示されている矢印を削除
 		remove(arrow[n]);
@@ -262,7 +266,7 @@ class PlayPanel extends JPanel
 		
 		public void actionPerformed(ActionEvent e)
 		{
-			select_sou.start();;
+			SoundManager.playback(select_sou);
 
 			for(int i = 0; i < 5; i++)
 			{
