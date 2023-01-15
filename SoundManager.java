@@ -34,6 +34,7 @@ class SoundManager {
 		return null;
 	}
 
+	// clipを再生
 	public static void playback(Clip clip)
 	{
 		clip.setFramePosition(0);
