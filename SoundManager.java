@@ -34,9 +34,9 @@ class SoundManager {
 		return null;
 	}
 
-	public static void playback(String path)
+	public static void playback(Clip clip)
 	{
-		Clip clip = createClip(new File(path));
+		clip.setFramePosition(0);
 		clip.start();
 	}
 }
