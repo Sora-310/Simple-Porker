@@ -3,7 +3,7 @@
 
 ## Feature
 "Simple-Porker" allows players to play a simple game of poker.<br>
-Hold any number of cards from the five cards, and replace the cards other than the one you hold with other cards to arrange the hands.<br>
+Hold any number of cards from the five cards, and replace the cards other than the one you hold with other cards to arrange the hands.
 That's all there is to it.<br>
 Created in reference to the "Granblue Fantasy" mini-game.<br>
 
