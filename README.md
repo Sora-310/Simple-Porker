@@ -10,6 +10,7 @@ Created in reference to the "Granblue Fantasy" mini-game.<br>
 ## Install
 After downloading the zip file, run "Sample.java" in Visual Studio or Visual Stuidio Code, etc.<br>
 I don't test environments under Linux and Mac.<br>
+All images and sound files are free materials from the Internet. Please do not reuse them for other purposes.<br>
 
 ## Requirement
 jdk-18.0.1<br>
