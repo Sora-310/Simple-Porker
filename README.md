@@ -11,6 +11,9 @@ Created in reference to the "Granblue Fantasy" mini-game.<br>
 After downloading the zip file, run "Sample.java" in Visual Studio or Visual Stuidio Code, etc.<br>
 I don't test environments under Linux and Mac.<br>
 
+# Requirement
+jdk-18.0.1<br>
+
 ## Note
 All code descriptions, etc., are written in Japanese. Please be careful.
 If we have time, I would like to implement a wagering feature where people can bet coins, etc.
