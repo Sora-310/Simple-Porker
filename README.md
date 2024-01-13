@@ -1,15 +1,15 @@
-# Simple Porker
-"Simple Porker" is a simple porker game made in Java.
+# Simple-Porker
+"Simple-Porker" is a simple porker game made in Java.
 
 ## Feature
-"Simple Porker made in Java" allows players to play a simple game of poker.
-Hold any number of cards from the five cards, and replace the cards other than the one you hold with other cards to arrange the hands.
-That's all there is to it.
-Created in reference to the "Granblue Fantasy" mini-game.
+"Simple-Porker" allows players to play a simple game of poker.<br>
+Hold any number of cards from the five cards, and replace the cards other than the one you hold with other cards to arrange the hands.<br>
+That's all there is to it.<br>
+Created in reference to the "Granblue Fantasy" mini-game.<br>
 
 ## Install
-After downloading the zip file, run "Sample.java" in Visual Studio or Visual Stuidio Code, etc.
-I don't test environments under Linux and Mac.
+After downloading the zip file, run "Sample.java" in Visual Studio or Visual Stuidio Code, etc.<br>
+I don't test environments under Linux and Mac.<br>
 
 ## Note
 All code descriptions, etc., are written in Japanese. Please be careful.
